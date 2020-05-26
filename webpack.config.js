@@ -12,7 +12,15 @@ const fileName = ext => {
 }
 
 const jsLoader = () => {
-  const defLoaders = ['babel-loader'];
+  const defLoaders = [
+    {
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-env'],
+        plugins: ['@babel/plugin-proposal-class-properties'],
+      }
+    }
+  ];
   if (isDev) defLoaders.push('eslint-loader');
   return defLoaders;
 }
@@ -27,7 +35,7 @@ module.exports = {
   },
   devtool: isDev ? 'source-map' : false,
   devServer: {
-    port: 3000,
+    port: 3500,
     hot: isDev,
   },
   resolve: {
