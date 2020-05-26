@@ -33,5 +33,6 @@ export class Router {
       this.routes.excel : this.routes.main
     this.page = new Page(ActiveRoute.params);
     this.$app.append(this.page.getRoot())
+    this.page.afterRender()
   }
 }

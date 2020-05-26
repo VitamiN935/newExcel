@@ -1,19 +1,37 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
+import {changeTitle, updateDate} from '../../core/store/actions';
+import {$} from '../../core/dom';
+import {createHeader} from './Header.template';
+import {ActiveRoute} from '../../core/router/ActiveRoute';
 
 export class Header extends ExcelComponent {
   static className = 'excel__header'
-  toHtml() {
-    return `
-            <input type="text" class="input" value="Новая таблица"/>
+  constructor($root, options) {
+    super($root, {
+      ...options,
+      name: 'Header',
+      listeners: ['input', 'click']
+    });
+  }
 
-            <div>
-                <div class="button">
-                    <span class="material-icons">delete</span>
-                </div>
-                <div class="button">
-                    <span class="material-icons">exit_to_app</span>
-                </div>
-            </div>
-`
+  onInput(event) {
+    const $target = $(event.target)
+    this.$dispatch(changeTitle($target.text()))
+  }
+
+  onClick(event) {
+    const $target = $(event.target);
+    console.log($target.data.type)
+    if ($target.data.type === 'delete') {
+      localStorage.removeItem(ActiveRoute.path)
+      document.location.hash = '#'
+    } else if ($target.data.type === 'exit') {
+      this.$dispatch(updateDate(new Date().toLocaleString()))
+      document.location.hash = '#'
+    }
+  }
+
+  toHtml() {
+    return createHeader(this.$getState())
   }
 }

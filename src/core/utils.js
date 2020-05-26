@@ -12,3 +12,14 @@ export function storage(key, value) {
   }
   localStorage.setItem(key, JSON.stringify(value));
 }
+
+export function capitalize(str) {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
+export function isEqual(a, b) {
+  if (typeof a === 'object' && typeof b === 'object') {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
+  return a === b;
+}
