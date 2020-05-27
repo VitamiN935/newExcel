@@ -54,7 +54,13 @@ class Dom {
   }
 
   findAll(selector) {
-    return $(this.$el.querySelectorAll(selector))
+    return Array.from(this.$el.querySelectorAll(selector))
+        .map(el => $(el))
+  }
+
+  focus() {
+    this.$el.focus()
+    return this;
   }
 
   html(html) {
@@ -69,8 +75,8 @@ class Dom {
     if (parse) {
       const parsed = this.id().split(':');
       return {
-        row: parsed[0],
-        col: parsed[1]
+        row: +parsed[0],
+        col: +parsed[1]
       }
     }
     return this.data.id

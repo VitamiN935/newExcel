@@ -1,9 +1,13 @@
 import {ExcelComponent} from '@core/ExcelComponent';
 import {createTable} from '@/components/Table/Table.template';
+// eslint-disable-next-line max-len
+import {isResize, matrix, resizeHandler} from '@/components/Table/Table.functions';
+import {TableSelector} from '@/components/Table/TableSelector';
 import {$} from '@core/dom';
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
+
   constructor($root, options) {
     super($root, {
       ...options,
@@ -12,21 +16,31 @@ export class Table extends ExcelComponent {
     });
   }
 
-  onMousedown(event) {
-    if ($(event.target).data.resize) {
-      const $resize = $(event.target);
-      const $parent = $resize.closest('[data-type="resizable"]');
-      const coords = $parent.getCoords();
-      const type = $resize.data.resize;
-      document.onmousemove = e => {
-        const step = e.pageX - coords.right;
-        const value = coords.width + step;
-        $parent.css({width: value + 'px'})
+  prepare() {
+    this.selector = new TableSelector();
+  }
 
-        document.onmouseup = () => {
-          document.onmousemove = null;
-          document.onmouseup = null;
-        }
+  init() {
+    super.init();
+    this.selector.select(this.$root.find(`[data-id="0:0"]`))
+  }
+
+  async tableResize(event) {
+    const data = await resizeHandler(this.$root, event);
+    console.log(data);
+  }
+
+  onMousedown(event) {
+    if (isResize(event)) {
+      this.tableResize(event)
+    } else {
+      const $target = $(event.target);
+      if (event.shiftKey) {
+        const $group = matrix($target, this.selector.$current)
+            .map(id => this.$root.find(`[data-id="${id}"]`))
+        this.selector.selectGroup($group)
+      } else {
+        this.selector.select($target);
       }
     }
   }
@@ -35,3 +49,4 @@ export class Table extends ExcelComponent {
     return createTable(20)
   }
 }
+
