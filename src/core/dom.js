@@ -4,12 +4,11 @@ class Dom {
       document.querySelector(selector) : selector
   }
 
-  html(html) {
-    if (html) {
-      this.$el.innerHTML = html;
-      return this;
+  addClass(...classes) {
+    if (classes) {
+      classes.forEach(c => this.$el.classList.add(c))
     }
-    return this.$el.outerHTML
+    return this;
   }
 
   append(node) {
@@ -21,6 +20,79 @@ class Dom {
     return this;
   }
 
+  attr(key, value) {
+    if (!value) {
+      return this.$el.getAttribute(key)
+    }
+    this.$el.setAttribute(key, value);
+    return this;
+  }
+
+  closest(selector) {
+    return $(this.$el.closest(selector))
+  }
+
+  css(style) {
+    Object.keys(style).forEach(key => this.$el.style[key] = style[key])
+  }
+
+  clear() {
+    this.html(' ');
+    return this;
+  }
+
+  getCoords() {
+    return this.$el.getBoundingClientRect()
+  }
+
+  get data() {
+    return this.$el.dataset;
+  }
+
+  find(selector) {
+    return $(this.$el.querySelector(selector))
+  }
+
+  findAll(selector) {
+    return $(this.$el.querySelectorAll(selector))
+  }
+
+  html(html) {
+    if (html) {
+      this.$el.innerHTML = html;
+      return this;
+    }
+    return this.$el.outerHTML
+  }
+
+  id(parse) {
+    if (parse) {
+      const parsed = this.id().split(':');
+      return {
+        row: parsed[0],
+        col: parsed[1]
+      }
+    }
+    return this.data.id
+  }
+
+  on(event, callback) {
+    this.$el.addEventListener(event, callback);
+    return this;
+  }
+
+  off(event, callback) {
+    this.$el.removeEventListener(event, callback);
+    return this;
+  }
+
+  removeClass(...classes) {
+    if (classes) {
+      classes.forEach(c => this.$el.classList.remove(c))
+    }
+    return this;
+  }
+
   text(text) {
     if (typeof text !== 'undefined') {
       this.$el.textContent = text;
@@ -29,22 +101,6 @@ class Dom {
       return this.$el.value.trim();
     }
     return this.$el.textContent.trim()
-  }
-
-  get data() {
-    return this.$el.dataset;
-  }
-
-  on(event, callback) {
-    this.$el.addEventListener(event, callback);
-  }
-
-  off(event, callback) {
-    this.$el.removeEventListener(event, callback);
-  }
-
-  clear() {
-    this.html(' ');
   }
 }
 
