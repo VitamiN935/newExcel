@@ -1,4 +1,6 @@
-import {ExcelComponent} from '../../core/ExcelComponent';
+import {ExcelComponent} from '@core/ExcelComponent';
+import {createTable} from '@/components/Table/Table.template';
+import {$} from '@core/dom';
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
@@ -6,48 +8,30 @@ export class Table extends ExcelComponent {
     super($root, {
       ...options,
       name: 'Table',
-      listeners: []
+      listeners: ['mousedown']
     });
   }
 
+  onMousedown(event) {
+    if ($(event.target).data.resize) {
+      const $resize = $(event.target);
+      const $parent = $resize.closest('[data-type="resizable"]');
+      const coords = $parent.getCoords();
+      const type = $resize.data.resize;
+      document.onmousemove = e => {
+        const step = e.pageX - coords.right;
+        const value = coords.width + step;
+        $parent.css({width: value + 'px'})
+
+        document.onmouseup = () => {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        }
+      }
+    }
+  }
+
   toHtml() {
-    return `
-            <div class="row">
-
-                <div class="row-info">&nbsp;</div>
-
-                <div class="row-data">
-                    <div class="column">A</div>
-                    <div class="column">B</div>
-                    <div class="column">C</div>
-                    <div class="column">D</div>
-                </div>
-
-            </div>
-            <div class="row">
-
-                <div class="row-info">1</div>
-
-                <div class="row-data">
-                    <div class="cell selected" contenteditable>as</div>
-                    <div class="cell" contenteditable>A1</div>
-                    <div class="cell" contenteditable>b2</div>
-                    <div class="cell" contenteditable>c3</div>
-                </div>
-
-            </div>
-            <div class="row">
-
-                <div class="row-info">2</div>
-
-                <div class="row-data">
-                    <div class="cell"></div>
-                    <div class="cell"></div>
-                    <div class="cell"></div>
-                    <div class="cell"></div>
-                </div>
-
-            </div>
-        `
+    return createTable(20)
   }
 }
