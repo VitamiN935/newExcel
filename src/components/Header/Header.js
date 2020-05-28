@@ -1,8 +1,9 @@
-import {ExcelComponent} from '../../core/ExcelComponent';
-import {changeTitle, updateDate} from '../../core/store/actions';
-import {$} from '../../core/dom';
+import {ExcelComponent} from '@core/ExcelComponent';
+import {changeTitle, updateDate} from '@core/store/actions';
+import {$} from '@core/dom';
 import {createHeader} from './Header.template';
-import {ActiveRoute} from '../../core/router/ActiveRoute';
+import {ActiveRoute} from '@core/router/ActiveRoute';
+import {debounse} from '@core/utils';
 
 export class Header extends ExcelComponent {
   static className = 'excel__header'
@@ -12,6 +13,10 @@ export class Header extends ExcelComponent {
       name: 'Header',
       listeners: ['input', 'click']
     });
+  }
+
+  prepare() {
+    this.onInput = debounse(this.onInput, 300)
   }
 
   onInput(event) {

@@ -3,6 +3,8 @@ import {clone, storage} from '../utils';
 const initialState = {
   colState: {},
   rowState: {},
+  dataState: {},
+  currentText: '',
   title: '',
   date: new Date().toLocaleString()
 }
