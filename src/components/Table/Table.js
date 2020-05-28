@@ -1,9 +1,11 @@
 import {ExcelComponent} from '@core/ExcelComponent';
 import {createTable} from '@/components/Table/Table.template';
 // eslint-disable-next-line max-len
-import {isResize, matrix, resizeHandler} from '@/components/Table/Table.functions';
+import {isResize, matrix, nextSelector, toNextCell} from '@/components/Table/Table.functions';
 import {TableSelector} from '@/components/Table/TableSelector';
 import {$} from '@core/dom';
+import * as actions from '@core/store/actions';
+import {resizeHandler} from '@/components/Table/Table.resize';
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
@@ -12,7 +14,7 @@ export class Table extends ExcelComponent {
     super($root, {
       ...options,
       name: 'Table',
-      listeners: ['mousedown']
+      listeners: ['mousedown', 'keydown', 'input']
     });
   }
 
@@ -25,14 +27,31 @@ export class Table extends ExcelComponent {
     this.selector.select(this.$root.find(`[data-id="0:0"]`))
   }
 
-  async tableResize(event) {
+  async isTableResize(event) {
     const data = await resizeHandler(this.$root, event);
-    console.log(data);
+    this.$dispatch(actions.tableResize(data))
+  }
+
+  onKeydown(event) {
+    if (toNextCell(event)) {
+      event.preventDefault()
+      const id = this.selector.$current.id(true)
+      const key = event.key;
+      const $targetCell = this.$root.find(nextSelector(key, id));
+      this.selector.select($targetCell)
+    }
+  }
+
+  onInput() {
+    this.$dispatch(actions.changeText({
+      id: this.selector.$current.id(),
+      value: this.selector.$current.text(),
+    }))
   }
 
   onMousedown(event) {
     if (isResize(event)) {
-      this.tableResize(event)
+      this.isTableResize(event)
     } else {
       const $target = $(event.target);
       if (event.shiftKey) {
@@ -46,7 +65,8 @@ export class Table extends ExcelComponent {
   }
 
   toHtml() {
-    return createTable(20)
+    return createTable(20, this.$getState())
   }
 }
+
 

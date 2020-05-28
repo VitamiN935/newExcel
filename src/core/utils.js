@@ -38,4 +38,17 @@ export function range(start, end) {
       .map((_, idx) => start + idx)
 }
 
+export function debounse(fn, ms) {
+  let timeout;
+  return function(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      // eslint-disable-next-line no-invalid-this
+      return fn.apply(this, args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, ms)
+  }
+}
+
 

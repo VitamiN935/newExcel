@@ -1,19 +1,19 @@
-import {Page} from '../core/Page';
-import {Excel} from '../components/Excel/Excel';
-import {Header} from '../components/Header/Header';
-import {Toolbar} from '../components/Toolbar/Toolbar';
-import {Formula} from '../components/Formula/Formula';
-import {Table} from '../components/Table/Table';
-import {createStore} from '../core/store/createStore';
-import {rootReducer} from '../core/store/rootReducer';
-import {storage, storageName} from '../core/utils';
-import {getInitialState} from '../core/store/initialState';
-import {updateDate} from '../core/store/actions';
+import {Page} from '@core/Page';
+import {Excel} from '@/components/Excel/Excel';
+import {Header} from '@/components/Header/Header';
+import {Toolbar} from '@/components/Toolbar/Toolbar';
+import {Formula} from '@/components/Formula/Formula';
+import {Table} from '@/components/Table/Table';
+import {createStore} from '@core/store/createStore';
+import {rootReducer} from '@core/store/rootReducer';
+import {debounse, storage, storageName} from '@core/utils';
+import {getInitialState} from '@core/store/initialState';
+import {updateDate} from '@core/store/actions';
 
 export class StateProcessor {
   constructor(client, delay = 300) {
     this.client = client;
-    this.listen = this.listen.bind(this)
+    this.listen = debounse(this.listen.bind(this), delay)
   }
 
   listen(state) {
